@@ -1517,5 +1517,42 @@ style.textContent = `
         cursor: not-allowed !important;
         pointer-events: none;
     }
+    // Auto-backup feature
+function setupAutoBackup() {
+    // Backup every hour
+    setInterval(createAutoBackup, 60 * 60 * 1000);
+    
+    // Backup when window closes
+    window.addEventListener('beforeunload', function() {
+        createAutoBackup();
+    });
+}
+
+function createAutoBackup() {
+    const inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+    const companies = JSON.parse(localStorage.getItem('companies')) || [];
+    const settings = JSON.parse(localStorage.getItem('settings')) || {};
+    
+    const backup = {
+        timestamp: new Date().toISOString(),
+        inventory: inventory,
+        companies: companies,
+        settings: settings
+    };
+    
+    // Save last 5 backups
+    let backups = JSON.parse(localStorage.getItem('backups') || '[]');
+    backups.push(backup);
+    
+    // Keep only last 5 backups
+    if (backups.length > 5) {
+        backups = backups.slice(-5);
+    }
+    
+    localStorage.setItem('backups', JSON.stringify(backups));
+}
+
+// Initialize auto-backup
+setupAutoBackup();
 `;
 document.head.appendChild(style);
