@@ -13,7 +13,7 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-boxes"></i> ប្រព័ន្ធគ្រប់គ្រងស្តុកទំនិញ</h1>
-            <h2 id="company-name">ក្រុមហ៊ុនរបស់អ្នក</h2>
+            <h2 id="company-name-display">ក្រុមហ៊ុនរបស់អ្នក</h2>
         </header>
 
         <nav class="tabs">
@@ -34,6 +34,13 @@
                 <h2><i class="fas fa-plus"></i> បន្ថែមទំនិញថ្មី</h2>
                 <form id="add-item-form">
                     <div class="form-group">
+                        <label for="item-company"><i class="fas fa-building"></i> ឈ្មោះក្រុមហ៊ុន:</label>
+                        <select id="item-company" required>
+                            <option value="">-- ជ្រើសរើសក្រុមហ៊ុន --</option>
+                            <!-- Company options will be loaded dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="item-name"><i class="fas fa-tag"></i> ឈ្មោះទំនិញ:</label>
                         <input type="text" id="item-name" placeholder="បញ្ចូលឈ្មោះទំនិញ..." required>
                     </div>
@@ -49,11 +56,22 @@
                         <label for="item-date"><i class="fas fa-calendar-alt"></i> កាលបរិច្ឆេទ:</label>
                         <input type="date" id="item-date">
                     </div>
+                    <div class="form-group">
+                        <label for="item-category"><i class="fas fa-tags"></i> ប្រភេទទំនិញ:</label>
+                        <input type="text" id="item-category" placeholder="ឧ. គ្រឿងអគ្គិសនី, គ្រឿងសំអាង...">
+                    </div>
+                    <div class="form-group">
+                        <label for="item-notes"><i class="fas fa-sticky-note"></i> កំណត់ចំណាំ:</label>
+                        <textarea id="item-notes" placeholder="កំណត់ចំណាំបន្ថែម..." rows="2"></textarea>
+                    </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> រក្សាទុកទំនិញ
                     </button>
                     <button type="button" id="reset-form" class="btn btn-secondary">
                         <i class="fas fa-redo"></i> សម្អាត
+                    </button>
+                    <button type="button" id="add-new-company" class="btn btn-info">
+                        <i class="fas fa-plus-circle"></i> បន្ថែមក្រុមហ៊ុនថ្មី
                     </button>
                 </form>
                 <div class="recent-added">
@@ -76,20 +94,78 @@
                             <p id="out-of-stock">0</p>
                         </div>
                         <div class="stat-card">
-                            <h3>ស្តុកទាប</h3>
-                            <p id="low-stock">0</p>
+                            <h3>ក្រុមហ៊ុន</h3>
+                            <p id="total-companies">0</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>តម្លៃសរុប</h3>
+                            <p id="total-value">$0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-controls">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="filter-company"><i class="fas fa-building"></i> ត្រងតាមក្រុមហ៊ុន:</label>
+                            <select id="filter-company" class="filter-select">
+                                <option value="all">ទាំងអស់</option>
+                                <!-- Company filter options will be loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-category"><i class="fas fa-tags"></i> ត្រងតាមប្រភេទ:</label>
+                            <select id="filter-category" class="filter-select">
+                                <option value="all">ទាំងអស់</option>
+                                <!-- Category filter options will be loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-stock"><i class="fas fa-box"></i> ស្ថានភាពស្តុក:</label>
+                            <select id="filter-stock" class="filter-select">
+                                <option value="all">ទាំងអស់</option>
+                                <option value="in-stock">មានស្តុក</option>
+                                <option value="out-of-stock">អស់ស្តុក</option>
+                                <option value="low-stock">ស្តុកទាប</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="sort-by"><i class="fas fa-sort"></i> រៀបតាម:</label>
+                            <select id="sort-by" class="filter-select">
+                                <option value="date-desc">កាលបរិច្ឆេទ (ថ្មីទៅចាស់)</option>
+                                <option value="date-asc">កាលបរិច្ឆេទ (ចាស់ទៅថ្មី)</option>
+                                <option value="name-asc">ឈ្មោះ (ក-ឡ)</option>
+                                <option value="name-desc">ឈ្មោះ (ឡ-ក)</option>
+                                <option value="quantity-asc">ចំនួន (តិចទៅច្រើន)</option>
+                                <option value="quantity-desc">ចំនួន (ច្រើនទៅតិច)</option>
+                                <option value="price-asc">តម្លៃ (តិចទៅច្រើន)</option>
+                                <option value="price-desc">តម្លៃ (ច្រើនទៅតិច)</option>
+                                <option value="company-asc">ក្រុមហ៊ុន (ក-ឡ)</option>
+                                <option value="company-desc">ក្រុមហ៊ុន (ឡ-ក)</option>
+                            </select>
+                        </div>
+                        <div class="filter-group search-group">
+                            <label for="search-items"><i class="fas fa-search"></i> ស្វែងរក:</label>
+                            <input type="text" id="search-items" placeholder="ស្វែងរកទំនិញ, ក្រុមហ៊ុន, ប្រភេទ...">
+                            <button id="clear-filters" class="btn btn-secondary btn-small">
+                                <i class="fas fa-times"></i> សម្អាត
+                            </button>
                         </div>
                     </div>
                 </div>
 
                 <div class="inventory-controls">
-                    <input type="text" id="search-items" placeholder="ស្វែងរកទំនិញ...">
                     <div class="button-group">
                         <button id="export-excel" class="btn btn-success">
                             <i class="fas fa-file-excel"></i> នាំចេញ Excel
                         </button>
                         <button id="print-inventory" class="btn btn-info">
                             <i class="fas fa-print"></i> បោះពុម្ព
+                        </button>
+                        <button id="export-csv" class="btn btn-warning">
+                            <i class="fas fa-file-csv"></i> នាំចេញ CSV
                         </button>
                         <button id="delete-all" class="btn btn-danger">
                             <i class="fas fa-trash-alt"></i> លុបទាំងអស់
@@ -101,17 +177,28 @@
                     <table id="inventory-table">
                         <thead>
                             <tr>
-                                <th>ល.រ</th>
-                                <th>ទំនិញ</th>
-                                <th>ចំនួន</th>
-                                <th>តម្លៃ</th>
-                                <th>កាលបរិច្ឆេទ</th>
+                                <th data-sort="company">ក្រុមហ៊ុន <i class="fas fa-sort"></i></th>
+                                <th data-sort="name">ទំនិញ <i class="fas fa-sort"></i></th>
+                                <th data-sort="category">ប្រភេទ <i class="fas fa-sort"></i></th>
+                                <th data-sort="quantity">ចំនួន <i class="fas fa-sort"></i></th>
+                                <th data-sort="price">តម្លៃ <i class="fas fa-sort"></i></th>
+                                <th data-sort="date">កាលបរិច្ឆេទ <i class="fas fa-sort"></i></th>
                                 <th>សកម្មភាព</th>
                             </tr>
                         </thead>
                         <tbody id="inventory-list">
                             <!-- Items will be loaded here -->
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7">
+                                    <div class="summary-info">
+                                        <span>បានបង្ហាញ <span id="showing-count">0</span> នៃ <span id="total-count">0</span> ទំនិញ</span>
+                                        <span class="company-summary" id="company-summary"></span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </section>
@@ -119,52 +206,156 @@
             <!-- Settings Tab -->
             <section id="settings" class="tab-pane">
                 <h2><i class="fas fa-cog"></i> ការកំណត់ក្រុមហ៊ុន</h2>
-                <form id="settings-form">
-                    <div class="form-group">
-                        <label for="company-name-input"><i class="fas fa-building"></i> ឈ្មោះក្រុមហ៊ុន:</label>
-                        <input type="text" id="company-name-input" placeholder="ឈ្មោះក្រុមហ៊ុន...">
+                
+                <div class="settings-container">
+                    <div class="settings-section">
+                        <h3><i class="fas fa-info-circle"></i> ព័ត៌មានក្រុមហ៊ុនសំខាន់</h3>
+                        <form id="company-settings-form">
+                            <div class="form-group">
+                                <label for="company-name"><i class="fas fa-building"></i> ឈ្មោះក្រុមហ៊ុន (សំខាន់):</label>
+                                <input type="text" id="company-name" placeholder="ឈ្មោះក្រុមហ៊ុនសំខាន់..." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="company-address"><i class="fas fa-map-marker-alt"></i> អាសយដ្ឋាន:</label>
+                                <textarea id="company-address" placeholder="អាសយដ្ឋានក្រុមហ៊ុន..." rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="company-phone"><i class="fas fa-phone"></i> លេខទូរស័ព្ទ:</label>
+                                <input type="tel" id="company-phone" placeholder="លេខទូរស័ព្ទ...">
+                            </div>
+                            <div class="form-group">
+                                <label for="company-email"><i class="fas fa-envelope"></i> អ៊ីមែល:</label>
+                                <input type="email" id="company-email" placeholder="អ៊ីមែល...">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> រក្សាទុកការកំណត់ក្រុមហ៊ុន
+                            </button>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <label for="company-address"><i class="fas fa-map-marker-alt"></i> អាសយដ្ឋាន:</label>
-                        <textarea id="company-address" placeholder="អាសយដ្ឋានក្រុមហ៊ុន..." rows="3"></textarea>
+
+                    <div class="settings-section">
+                        <h3><i class="fas fa-list"></i> គ្រប់គ្រងបញ្ជីក្រុមហ៊ុន</h3>
+                        <div class="company-list-controls">
+                            <input type="text" id="search-company" placeholder="ស្វែងរកក្រុមហ៊ុន...">
+                            <button id="add-company-btn" class="btn btn-success">
+                                <i class="fas fa-plus"></i> បន្ថែមក្រុមហ៊ុន
+                            </button>
+                        </div>
+                        <div class="company-list-container">
+                            <table id="company-list">
+                                <thead>
+                                    <tr>
+                                        <th>ល.រ</th>
+                                        <th>ឈ្មោះក្រុមហ៊ុន</th>
+                                        <th>ចំនួនទំនិញ</th>
+                                        <th>សកម្មភាព</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="company-list-body">
+                                    <!-- Companies will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="company-phone"><i class="fas fa-phone"></i> លេខទូរស័ព្ទ:</label>
-                        <input type="tel" id="company-phone" placeholder="លេខទូរស័ព្ទ...">
+
+                    <div class="settings-section">
+                        <h3><i class="fas fa-sliders-h"></i> ការកំណត់ទូទៅ</h3>
+                        <form id="general-settings-form">
+                            <div class="form-group">
+                                <label for="date-format"><i class="fas fa-calendar"></i> ទម្រង់កាលបរិច្ឆេទ:</label>
+                                <select id="date-format">
+                                    <option value="dd/mm/yyyy">ថ្ងៃ/ខែ/ឆ្នាំ</option>
+                                    <option value="mm/dd/yyyy">ខែ/ថ្ងៃ/ឆ្នាំ</option>
+                                    <option value="yyyy-mm-dd">ឆ្នាំ-ខែ-ថ្ងៃ</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="currency"><i class="fas fa-money-bill-wave"></i> រូបិយប័ណ្ណ:</label>
+                                <select id="currency">
+                                    <option value="$">ដុល្លារ ($)</option>
+                                    <option value="៛">រៀល (៛)</option>
+                                    <option value="€">អឺរ៉ូ (€)</option>
+                                    <option value="¥">យេន (¥)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="low-stock-threshold"><i class="fas fa-exclamation-triangle"></i> កម្រិតស្តុកទាប:</label>
+                                <input type="number" id="low-stock-threshold" placeholder="5" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="items-per-page"><i class="fas fa-file-alt"></i> ទំនិញក្នុងមួយទំព័រ:</label>
+                                <input type="number" id="items-per-page" placeholder="20" min="5" max="100">
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> រក្សាទុកការកំណត់ទូទៅ
+                            </button>
+                            <button type="button" id="reset-settings" class="btn btn-secondary">
+                                <i class="fas fa-undo"></i> កំណត់ឡើងវិញ
+                            </button>
+                        </form>
                     </div>
-                    <div class="form-group">
-                        <label for="date-format"><i class="fas fa-calendar"></i> ទម្រង់កាលបរិច្ឆេទ:</label>
-                        <select id="date-format">
-                            <option value="dd/mm/yyyy">ថ្ងៃ/ខែ/ឆ្នាំ</option>
-                            <option value="mm/dd/yyyy">ខែ/ថ្ងៃ/ឆ្នាំ</option>
-                            <option value="yyyy-mm-dd">ឆ្នាំ-ខែ-ថ្ងៃ</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="low-stock-threshold"><i class="fas fa-exclamation-triangle"></i> កម្រិតស្តុកទាប:</label>
-                        <input type="number" id="low-stock-threshold" placeholder="5" min="1">
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> រក្សាទុកការកំណត់
-                    </button>
-                    <button type="button" id="reset-settings" class="btn btn-secondary">
-                        <i class="fas fa-undo"></i> កំណត់ឡើងវិញ
-                    </button>
-                </form>
+                </div>
 
                 <div class="settings-info">
                     <h3><i class="fas fa-info-circle"></i> ព័ត៌មានកម្មវិធី</h3>
-                    <p>ប្រព័ន្ធគ្រប់គ្រងស្តុកទំនិញ v1.0</p>
+                    <p><strong>ប្រព័ន្ធគ្រប់គ្រងស្តុកទំនិញ v2.0</strong> - ជំនាន់ក្រុមហ៊ុន</p>
                     <p>ទិន្នន័យត្រូវបានរក្សាទុកក្នុងកុំព្យូទ័ររបស់អ្នក</p>
-                    <p>អ្នកអាចនាំចេញទិន្នន័យទៅជាឯកសារ Excel</p>
+                    <p>អ្នកអាចគ្រប់គ្រងចំនួនគ្មានកំណត់នៃក្រុមហ៊ុន និងទំនិញ</p>
+                    <p id="data-stats">កាលបរិច្ឆេទ: <span id="app-date"></span></p>
                 </div>
             </section>
         </main>
 
         <footer>
-            <p>© 2024 ប្រព័ន្ធគ្រប់គ្រងស្តុកទំនិញ | បង្កើតឡើងដោយ HTML, CSS & JavaScript</p>
+            <p>© 2024 ប្រព័ន្ធគ្រប់គ្រងស្តុកទំនិញ | ជំនាន់ក្រុមហ៊ុន | បង្កើតឡើងដោយ HTML, CSS & JavaScript</p>
         </footer>
+    </div>
+
+    <!-- Modal for adding/editing company -->
+    <div id="company-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-building"></i> <span id="modal-title">បន្ថែមក្រុមហ៊ុនថ្មី</span></h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="company-form">
+                    <div class="form-group">
+                        <label for="modal-company-name">ឈ្មោះក្រុមហ៊ុន:</label>
+                        <input type="text" id="modal-company-name" placeholder="ឈ្មោះក្រុមហ៊ុន..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-company-code">កូដក្រុមហ៊ុន:</label>
+                        <input type="text" id="modal-company-code" placeholder="កូដ (ជាជម្រើស)">
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-company-contact">ឈ្មោះអ្នកទំនាក់ទំនង:</label>
+                        <input type="text" id="modal-company-contact" placeholder="ឈ្មោះអ្នកទំនាក់ទំនង...">
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-company-phone">លេខទូរស័ព្ទ:</label>
+                        <input type="tel" id="modal-company-phone" placeholder="លេខទូរស័ព្ទ...">
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-company-email">អ៊ីមែល:</label>
+                        <input type="email" id="modal-company-email" placeholder="អ៊ីមែល...">
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-company-notes">កំណត់ចំណាំ:</label>
+                        <textarea id="modal-company-notes" placeholder="កំណត់ចំណាំ..." rows="3"></textarea>
+                    </div>
+                    <input type="hidden" id="modal-company-id">
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> រក្សាទុក
+                        </button>
+                        <button type="button" class="btn btn-secondary modal-close">
+                            <i class="fas fa-times"></i> បោះបង់
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- Print Template (hidden) -->
